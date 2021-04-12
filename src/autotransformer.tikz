@@ -1,0 +1,89 @@
+\documentclass[border=15pt]{standalone}
+
+\usepackage{tikz}
+\usepackage{libertine}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathmorphing}
+
+\newcommand\connection{0.75pt}
+\newcommand\polarity{1.5pt}
+
+\begin{document}
+
+    \begin{tikzpicture}[
+        scale=0.8,
+        winding/.style={
+            decoration={
+                mirror,
+                aspect=0.6,
+                segment length=5pt,
+                amplitude=4pt,
+                coil,
+            },
+            decorate
+        }
+    ]
+
+        % Draw neutral
+        \draw[fill=black]
+            (0, 0) coordinate (n) circle(\connection);
+
+        % Place nodes
+        \foreach \phase/\angle in {A/148, B/32.2, C/270}{
+            \draw (n) ++(\angle:2.2) coordinate(temp \phase);
+            \draw (temp \phase) ++(\angle:1.185) coordinate (\phase);
+        }
+
+        % Draw windings
+        \foreach \phase in {A, B, C}{
+        	% Common windings
+            \draw[winding]
+                ($(temp \phase)!0.25!(n)$) -- ($(temp \phase)!0.8!(n)$);
+            % Series windings
+            \draw[winding]
+                ($(\phase)!0.3!(temp \phase)$)
+                --
+                ($(\phase)!1.1!(temp \phase)$);
+            % Segment to neutral
+            \draw ($(temp \phase)!0.8!(n)$) -- (n);
+            % Segment between windings
+    		\draw
+                ($(\phase)!1.1!(temp \phase)$)
+                --
+                ($(temp \phase)!0.25!(n)$);
+            % Segment from series windings to phases
+            \draw ($(\phase)!0.3!(temp \phase)$) --(\phase);
+            % Polarity of common windings
+        	\draw[fill=black]
+                ($(temp \phase)!0.225!17.5:(n)$) circle (\polarity);
+            % Polarity of series windings
+        	\draw[fill=black]
+                ($(\phase)!0.275!25:(temp \phase)$) circle (\polarity);
+            % Derivations at LT
+            \draw
+                ($($(\phase)!1.1!(temp \phase)$)%
+                !0.4%
+                !($(temp \phase)!0.25!(n)$)$) coordinate (midpoint \phase);
+            % Draw points at derivations
+            \draw[fill=black] (midpoint \phase) circle(\connection);
+        }
+
+        % LV terminals
+    	\draw (midpoint A)  -- ++(58:1) -- ++(0:1);
+    	\draw[fill=black] (midpoint A) circle(\connection);
+
+       	\draw (midpoint B) -- ++(-58:1) -- ++(0:1);
+    	\draw[fill=black] (midpoint B) circle(\connection);
+
+    	\draw (midpoint C) -- ++(0:1);
+        \draw[fill=black] (midpoint C) circle(\connection);
+
+        % HV terminales
+		\draw (A) -- ++(0, 0.552) -- ++(-0.5, 0)
+              (B) -- ++(0, 0.552) -- ++(-0.5, 0)
+              (C) -- ++(-0.5, 0);
+    \end{tikzpicture}
+
+\end{document}
