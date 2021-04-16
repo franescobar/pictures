@@ -1,0 +1,63 @@
+\documentclass[multi=tikzpicture, border=0pt]{standalone}
+
+\usepackage{xcolor}
+\usepackage{libertine}
+\usepackage{tikz}
+\usepackage{catchfile}
+\usepackage{siunitx}
+
+\newcommand\loaddata[1]{\CatchFileDef\loadeddata{#1}{\endlinechar=-1}}
+
+\begin{document}
+
+    % Colors
+    \colorlet{border}{black!55}
+    \colorlet{element}{gray!35}
+    \colorlet{ball}{black!40}
+
+    % Geometry
+    \pgfmathsetmacro\pendulumlength{1}
+    \pgfmathsetmacro\pendulumwidth{\pendulumlength/10}
+    \pgfmathsetmacro\radius{\pendulumwidth}
+    \pgfmathsetmacro\pivotdiameter{\pendulumwidth/10}
+    \pgfmathsetmacro\boxprotrusion{2*\pendulumlength}
+
+    \loaddata{src/data.txt}
+    \foreach \tk/\thetak/\gammak/\pthetak/\pgammak in \loadeddata{
+        % Draw picture
+        \begin{tikzpicture}
+            \pagecolor{white}
+            % Place origin
+            \coordinate (origin) at (0, 0);
+
+            % Use bounding box
+            \useasboundingbox
+                (origin)
+                ++(-\boxprotrusion, -\boxprotrusion)
+                rectangle
+                ++(2*\boxprotrusion, 2*\boxprotrusion);
+
+            % Draw elements
+            \path[draw=border, very thin, fill=element]
+                (origin) ++(180+\thetak:\pendulumwidth/2)
+                -- ++(90+\thetak:\pendulumwidth/2)
+                -- ++(0+\thetak:\pendulumwidth)
+                -- ++(-90+\thetak:\pendulumlength)
+                -- ++(180+\thetak:\pendulumwidth/2) coordinate (connection)
+                -- ++(180+\thetak:\pendulumwidth/2)
+                -- cycle;
+            \path[draw=border, very thin, fill=element]
+                (connection) ++(180+\gammak:\pendulumwidth/2)
+                -- ++(90+\gammak:\pendulumwidth/2)
+                -- ++(0+\gammak:\pendulumwidth)
+                -- ++(-90+\gammak:\pendulumlength)
+                -- ++(180+\gammak:\pendulumwidth/2) coordinate (end)
+                -- ++(180+\gammak:\pendulumwidth/2)
+                -- cycle;
+            % Draw pivot
+            \draw[fill=black]
+                (origin) circle (\pivotdiameter/2)
+                (connection) circle (\pivotdiameter/2);
+        \end{tikzpicture}
+    }
+\end{document}

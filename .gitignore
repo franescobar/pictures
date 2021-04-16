@@ -2,7 +2,8 @@
 *.txt
 *.jpg
 *.pdf
-*.tex
+*.png
+*.mp4
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
