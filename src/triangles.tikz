@@ -1,0 +1,68 @@
+\documentclass[multi=tikzpicture, border=0.5pt]{standalone}
+
+% Fun puzzle: if each particle is connected to its two nearest neighbors, will
+% two connecting lines ever cross each other?
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{catchfile}
+
+\newcommand\loaddata[1]{\CatchFileDef\loadeddata{#1}{\endlinechar=-1}}
+
+\begin{document}
+
+    % Styles
+    \tikzset{
+        particle/.style={
+            draw=none,
+            fill=black!80,
+            circle,
+            inner sep=0pt,
+            minimum width=3pt
+        },
+        connection/.style={
+            thin,
+            draw=black!65
+        }
+    }
+
+    % Define animation parameters (should match those in triangles.py)
+    \pgfmathsetmacro\fps{30}
+    \pgfmathsetmacro\tf{15}
+    \pgfmathsetmacro\N{int(\fps*\tf - 1)}
+    \pgfmathsetmacro\scale{7}
+
+    \foreach \x in {0, 1, ..., \N}{
+        \begin{tikzpicture}
+
+            \coordinate (origin) at (0, 0);
+
+            % Bounding box is a unit square with bottom left corner at (0, 0)
+            \useasboundingbox (origin) rectangle ++(\scale, \scale);
+
+            % Place all coordinates
+            \loaddata{raw/positions-\x.txt}
+            \foreach \posx/\posy/\name in \loadeddata{
+                \path
+                    (\scale*\posx, \scale*\posy) coordinate (\name);
+            }
+
+            % Draw connections
+            \loaddata{raw/connections-\x.txt}
+            \foreach \start/\end in \loadeddata{
+                \path[connection]
+                    (\start) -- (\end);
+            }
+
+            % Draw all particles
+            \loaddata{raw/positions-\x.txt}
+            \foreach \posx/\posy/\name in \loadeddata{
+                \path
+                    (\name) node[particle]{};
+            }
+
+
+        \end{tikzpicture}
+    }
+
+\end{document}
