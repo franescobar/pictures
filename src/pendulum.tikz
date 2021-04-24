@@ -1,10 +1,8 @@
 \documentclass[multi=tikzpicture, border=0pt]{standalone}
 
 \usepackage{xcolor}
-\usepackage{libertine}
 \usepackage{tikz}
 \usepackage{catchfile}
-\usepackage{siunitx}
 
 \newcommand\loaddata[1]{\CatchFileDef\loadeddata{#1}{\endlinechar=-1}}
 
