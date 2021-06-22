@@ -1,0 +1,89 @@
+\documentclass[border=10pt]{standalone}
+
+\usepackage{tikz}
+    \usetikzlibrary{arrows.meta}
+    \usetikzlibrary{calc}
+
+\begin{document}
+
+    \begin{tikzpicture}[
+        axis/.style={
+            -latex
+        },
+        dq/.style={
+            axis
+        },
+        abc/.style={
+            axis
+        },
+        alphabeta/.style={
+            axis
+        },
+        rotation/.style={
+            -latex
+        },
+        every node/.style={
+            font=\footnotesize
+        }
+    ]
+
+        \coordinate (origin) at (0, 0);
+
+        \def\dqlength{2.75}
+        \def\dqangle{20}
+        \def\abclength{0.85*\dqlength}
+        \def\alphabetalength{1.175*\dqlength}
+        \def\rotationangle{\dqangle}
+        \def\rotationspan{20}
+        \def\rotationradius{1.25*\dqlength}
+        \def\thetapos{0.3*\dqlength}
+        \def\originthickness{0.75pt}
+
+        \colorlet{plane}{gray!15}
+
+        % Place rectangle
+        \fill[plane]
+            (origin) -- ++(\dqangle:\dqlength) -- ++(\dqangle-90:\dqlength)
+            coordinate (opposite)
+            -- ++(\dqangle-180:\dqlength) -- cycle;
+        \path
+            ($(origin)!0.5!(opposite)$) node{\shortstack{Plano $qd$}};
+
+
+        % Draw position of q axis
+        \draw
+            (origin) ++(0:\thetapos) arc(0:\dqangle:\thetapos)
+            node[pos=0.5, right]{$\theta$};
+
+        % Indicate rotation
+        \draw[rotation]
+            (origin) ++(\dqangle-0.5*\rotationspan:\rotationradius)
+            arc(\dqangle-0.5*\rotationspan:\dqangle+0.5*\rotationspan:
+                \rotationradius);
+
+        % Draw dq axes
+        \draw[dq]
+            (origin) -- ++(\dqangle:\dqlength) node[pos=1.08]{$q$};
+        \draw[dq]
+            (origin) -- ++(\dqangle-90:\dqlength) node[pos=1.08]{$d$};
+
+        % Draw alpha/beta axes
+        \draw[alphabeta]
+            (origin) -- ++(0:\alphabetalength) node[right]{$\alpha$};
+        \draw[alphabeta]
+            (origin) -- ++(-90:\alphabetalength) node[below]{$\beta$};
+
+        % Draw abc axes
+        \draw[abc]
+            (origin) -- ++(0:\abclength) node[below]{Eje $a$};
+        \draw[abc]
+            (origin) -- ++(-120:\abclength) node[pos=1.1]{Eje $c$};
+        \draw[abc]
+            (origin) -- ++(120:\abclength) node[pos=1.1]{Eje $b$};
+
+        % Place point at the origin
+        \fill[black] (origin) circle (\originthickness);
+
+    \end{tikzpicture}
+
+\end{document}
